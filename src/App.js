@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 
 import firebase from "firebase/app";
@@ -21,18 +21,13 @@ firebase.initializeApp({
 
 const auth = firebase.auth();
 const firestore = firebase.firestore();
-const analytics = firebase.analytics();
+// const analytics = firebase.analytics();
 
 function App() {
   const [user] = useAuthState(auth);
 
   return (
     <div className="App">
-      <header>
-        <h1>🔥🔥🔥</h1>
-        <SignOut />
-      </header>
-
       <section>{user ? <ChatRoom /> : <SignIn />}</section>
     </div>
   );
@@ -49,9 +44,6 @@ function SignIn() {
       <button className="sign-in" onClick={signInWithGoogle}>
         Sign in with Google
       </button>
-      <p>
-        Do not violate the community guidelines or you will be banned for life!
-      </p>
     </>
   );
 }
@@ -75,6 +67,10 @@ function ChatRoom() {
 
   const [formValue, setFormValue] = useState("");
 
+  useEffect(() => {
+    dummy.current.scrollIntoView({ behavior: "smooth" });
+  });
+
   const sendMessage = async (e) => {
     if (!formValue) {
       return;
@@ -97,6 +93,9 @@ function ChatRoom() {
 
   return (
     <>
+      <header>
+        <SignOut />
+      </header>
       <main>
         {messages &&
           messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
@@ -117,8 +116,8 @@ function ChatRoom() {
   );
 }
 
-function ChatMessage(props) {
-  const { text, uid, photoURL } = props.message;
+function ChatMessage({ message }) {
+  const { text, uid, photoURL } = message;
 
   const messageClass = uid === auth.currentUser.uid ? "sent" : "received";
 
@@ -126,6 +125,7 @@ function ChatMessage(props) {
     <>
       <div className={`message ${messageClass}`}>
         <img
+          alt="user profile"
           src={
             photoURL || "https://api.adorable.io/avatars/23/abott@adorable.png"
           }
