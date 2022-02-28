@@ -15,8 +15,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
-  width: calc(100% - 40px);
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .App header button {
@@ -82,7 +82,7 @@ button {
   background-color: #f4f7fb;
   border: none;
   color: #5b5757;
-  padding: 15px 32px;
+  padding: 20px;
   text-align: center;
   text-decoration: none;
   display: inline-block;

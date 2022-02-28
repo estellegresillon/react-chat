@@ -1,27 +1,29 @@
 import React, { useEffect, useRef, useState } from "react";
-import "./App.css";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import styled from "styled-components";
 
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
 import "firebase/analytics";
 
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import ProjectsModal from "./ProjectsModal";
+
+import "./App.css";
 
 firebase.initializeApp({
-  apiKey: "AIzaSyCbzLAxAWu6yzKUAl2vU_4e8u8pmuB1VLo",
+  apiKey: process.env.REACT_APP_FIREBASE_API,
   authDomain: "react-chat-3f2aa.firebaseapp.com",
   projectId: "react-chat-3f2aa",
   storageBucket: "react-chat-3f2aa.appspot.com",
   messagingSenderId: "640225446502",
-  appId: "1:640225446502:web:5fc9fce4e6d2ddd627fba7",
+  appId: process.env.REACT_APP_FIREBASE_ID,
   measurementId: "G-03KLBDJRK2",
 });
 
 const auth = firebase.auth();
 const firestore = firebase.firestore();
-// const analytics = firebase.analytics();
 
 function App() {
   const [user] = useAuthState(auth);
@@ -60,6 +62,8 @@ function SignOut() {
 
 function ChatRoom() {
   const dummy = useRef();
+  const [isOtherProjectsOpen, setOtherProjectsOpen] = useState(false);
+
   const messagesRef = firestore.collection("messages");
   const query = messagesRef.orderBy("createdAt").limit(25);
 
@@ -68,8 +72,8 @@ function ChatRoom() {
   const [formValue, setFormValue] = useState("");
 
   useEffect(() => {
-    dummy.current.scrollIntoView({ behavior: "smooth" });
-  });
+    dummy.current.scrollIntoView();
+  }, [messages]);
 
   const sendMessage = async (e) => {
     if (!formValue) {
@@ -95,6 +99,14 @@ function ChatRoom() {
     <>
       <header>
         <SignOut />
+        <Item>
+          <ItemContent onClick={() => setOtherProjectsOpen(true)}>
+            Other projects
+          </ItemContent>
+          {isOtherProjectsOpen && (
+            <ProjectsModal onClose={() => setOtherProjectsOpen(false)} />
+          )}
+        </Item>
       </header>
       <main>
         {messages &&
@@ -115,6 +127,33 @@ function ChatRoom() {
     </>
   );
 }
+
+const Item = styled.div`
+  background-color: #f4f7fb;
+  border: none;
+  color: #5b5757;
+  font-family: Arial;
+  padding: 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 15px;
+  position: relative;
+
+  &:hover {
+    background-color: #e8eaec;
+  }
+`;
+
+const ItemContent = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  white-space: nowrap;
+`;
 
 function ChatMessage({ message }) {
   const { text, uid, photoURL } = message;
