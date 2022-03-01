@@ -17,8 +17,8 @@ const PROJECTS = [
     name: "Flow",
   },
   {
-    link: "https://motus.estellegresillon.fr",
-    name: "Wordle",
+    link: "https://playground.estellegresillon.fr",
+    name: "Playground",
   },
   {
     link: "https://zest.estellegresillon.fr",
